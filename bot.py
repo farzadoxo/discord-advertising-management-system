@@ -62,11 +62,6 @@ welcome_embed.add_field(name=" 🔰 از کجا شروع کنم؟",value="""بر
 #     except:
 #         pass
 
-    
-
-    
-
-
 
 @client.tree.command(name="order",description="سفارش تبلیغات 📮")
 async def order(interaction:Interaction):
