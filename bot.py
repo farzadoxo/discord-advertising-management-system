@@ -470,4 +470,4 @@ async def user_manager(interaction:Interaction,user:Member):
 
 
 
-client.run('MTIyNTc1ODQ5MTc3NjY1MTI2NA.GVaai3.eHljEFGWDb_BFP0NEK2rrIEUGoXHosWaeJOntY')
+client.run('MTIyNTc1ODQ5MTc3NjY1MTI2NA.Gkks-J.6a1oF1Rkcay5jCwnv6l6mMkMMmiwH3ZnXiD2PY')
