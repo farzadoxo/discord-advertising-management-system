@@ -48,7 +48,23 @@ welcome_embed.add_field(name=" 🔰 از کجا شروع کنم؟",value="""بر
 
 
 
+# class DataExtractor:
+#     def __init__(self , userid:int):
+#         self.userid = userid
 
+#     DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {.userid}")
+#     item = DataBase.cursor.fetchone()
+#     try:
+#         # User Data
+#         user_balance = item[1]
+#         user_ads = item[2]
+#         user_warn = item[3]
+#     except:
+#         pass
+
+    
+
+    
 
 
 
@@ -336,19 +352,13 @@ async def help(interaction:Interaction):
 @app_commands.default_permissions(administrator=True)
 @app_commands.describe(user="کاربر موردنظر رو منشن کنید")
 async def user_manager(interaction:Interaction,user:Member):
-
-    DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
-    item = DataBase.cursor.fetchone()
-
-    if item == None:
-        sign_up(user_id=user.id)
-        await interaction.response.send_message("**کاربر از قبل ثبت نام نشده بود ولی الان اطلاعاتش توی دیتابیس ثبت شد✅**")
-    else:
+        DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
+        show_item = DataBase.cursor.fetchone()
+        #User Data
         try:
-            # User Data
-            user_balance = item[1]
-            user_ads = item[2]
-            user_warn = item[3]
+            user_balance = show_item[1]
+            user_ads = show_item[2]
+            user_warn = show_item[3]
         except:
             pass
         manager_embed = Embed(title="کاربر موردنظر با موفقیت از دیتابیس فچ شد",color=Colour.blurple())
@@ -368,27 +378,46 @@ async def user_manager(interaction:Interaction,user:Member):
 
 
         class AddCoinModal(Modal,title="واریز سکه"):
-            amount = TextInput(label="چند سکه به کاربر واریز شه؟",required=True,style=TextStyle.short)
+            add_amount = TextInput(label="چند سکه به کاربر واریز شه؟",required=True,style=TextStyle.short)
             
             async def on_submit(self,interaction:Interaction):
+                DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
+                item = DataBase.cursor.fetchone()
+                    #User Data
+                    #try:
+                        #user_balance = item[1]
+                        #user_ads = item[2]
+                        #user_warn = item[3]
+                    #except:
+                        #pass
+
                 try:
-                    DataBase.cursor.execute(f"UPDATE table1 SET balance = {user_balance + int(self.amount.value)} WHERE userid = {user.id}")
+                    DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] + int(self.add_amount.value)} WHERE userid = {user.id}")
                     DataBase.connection.commit()
-                    await interaction.response.send_message(f"**مقدار {self.amount} سکه به کاربر واریز شد. ✅**")
+                    await interaction.response.send_message(f"**مقدار {self.add_amount} سکه به کاربر واریز شد. ✅**")
                 except Exception as error:
                     await interaction.response.send_message("**در واریز سکه مشکلی پیش اومد ❌** {}".format(error))
 
 
         
         class RemoveCoinModal(Modal , title="برداشت سکه"):
-            amount = TextInput(label="چند سکه از کاربر برداشت شه؟",style=TextStyle.short)
+            remove_amount = TextInput(label="چند سکه از کاربر برداشت شه؟",style=TextStyle.short)
 
             async def on_submit(self , interaction:Interaction):
+                DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
+                item = DataBase.cursor.fetchone()
+                    #User Data
+                    #try:
+                        #user_balance = item[1]
+                        #user_ads = item[2]
+                        #user_warn = item[3]
+                    #except:
+                        #pass
                 try:
-                    if user_balance >= int(self.amount.value):
-                        DataBase.cursor.execute(f"UPDATE table1 SET balance = {user_balance - int(self.amount.value)} WHERE userid = {user.id}")
+                    if  item[1]>= int(self.remove_amount.value):
+                        DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] - int(self.remove_amount.value)} WHERE userid = {user.id}")
                         DataBase.connection.commit()
-                        await interaction.response.send_message(f"**مقدار {self.amount} سکه از کاربر برداشت شد. ✅**")
+                        await interaction.response.send_message(f"**مقدار {self.remove_amount} سکه از کاربر برداشت شد. ✅**")
                     else:
                         await interaction.response.send_message("**مقدار سکه کاربر از مقدار برداشت کمتر است ❌**")
                 except Exception as error:
@@ -399,13 +428,15 @@ async def user_manager(interaction:Interaction,user:Member):
 
         async def add_warn_button_callback(interaction:Interaction):
             try:
-                if user_warn + 1 == 3:
+                DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
+                item = DataBase.cursor.fetchone()
+                if item[3] + 1 == 3:
                     await user.ban(reason="رعایت نکردن قوانین ثبت بنر 🚫")
                     await interaction.response.send_message("**وارن های این کاربر به 3 تا رسید. کاربر با موفقیت بن شد ✅**")
                     DataBase.cursor.execute(f"DELETE FROM table1 WHERE userid = {user.id}")
                     DataBase.connection.commit()
                 else:
-                    DataBase.cursor.execute(f"UPDATE table1 SET warnings = {user_warn + 1} WHERE userid = {user.id}")
+                    DataBase.cursor.execute(f"UPDATE table1 SET warnings = {item[3] + 1} WHERE userid = {user.id}")
                     DataBase.connection.commit()
                     await interaction.response.send_message("**برای کاربر یک وارن افزوده شد ✅**")
             except Exception as error:
