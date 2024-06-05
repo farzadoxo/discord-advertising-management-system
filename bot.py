@@ -14,7 +14,7 @@ from datacenter import DataBase
 client = Bot(command_prefix="!",
              intents=Intents.all(),
              status=Status.online,
-             activity=Activity(type=ActivityType.watching , name="Ads 📈"))
+             activity=Activity(type=ActivityType.listening , name="To Spotify"))
 
 
 def sign_up(user_id:int):
@@ -40,7 +40,7 @@ async def on_ready():
 
 welcome_embed = Embed(title="به نظر کاربر جدید هستی :thinking:",
 description="""**سلام کاربر عزیز ، به سیستم تبلیغاتی ما خوش اومدی!
-اینجا میتونی به صورت کاملن رایگان هر بنر تبلیغاتی رو به راحتی تبلیغ کنی 👍🏼
+اینجا میتونی به صورت کاملا رایگان هر بنر تبلیغاتی رو به راحتی تبلیغ کنی 👍🏼
 با استفاده از خدمات ما میتونی سرور دیسکورد ، صفحات اجتماعی ، محصولات ، فروشگاهتو به راحتی تبلیغ کنی و ویو ، ممبر ، مشتری و... جذب کنی !😎
 \n**""",color=Colour.gold())
 welcome_embed.set_footer(text="ثبت نام شما با موفقیت انجام شد ✅")
@@ -96,7 +96,7 @@ async def order(interaction:Interaction):
                 
                 await interaction.response.send_message("**10 سکه گرفتی 🤑**",ephemeral=True)
                 
-        except :
+        except:
             pass
 
 
@@ -159,11 +159,11 @@ async def order(interaction:Interaction):
         if user_balance < 500:
             await interaction.response.send_message("**به اندازه کافی سکه نداری 💰**",ephemeral=True)
         else:
-            order_embed = Embed(title="**لطفا موارد زیر را مطالعه کنید**",color=0xffffff)
-            order_embed.add_field(name="📛1." , value="**ارسال هرگونه بنر حاوی محتوای جنسی ، کودک آزاری و ... ممنوع میشود**",inline=False)
-            order_embed.add_field(name="📛2." , value="**بنر ارسال شده قابل ویرایش نیست! در ارسال بنر دقت کنید.**",inline=False)
-            order_embed.add_field(name="📛3." , value="**موضوع بنر ارسالی میتواند تبلیغ سرور دیسکورد ، چنل یوتوب ، سایت و ... باشد**",inline=False)
-            order_embed.add_field(name="در صورت تایید موارد بالا از دکمه ثبت سفارش استفاده کنید ✅",value="\ub200")
+            order_embed = Embed(title="**لطفا موارد زیر را مطالعه کنید :**",color=Colour.blurple())
+            order_embed.add_field(name="1." , value="**ارسال هرگونه بنر حاوی محتوای جنسی ، کودک آزاری و ... ممنوع میشود.**",inline=False)
+            order_embed.add_field(name="2." , value="**بنر ارسال شده قابل ویرایش نیست! در ارسال بنر دقت کنید.**",inline=False)
+            order_embed.add_field(name="3." , value="**موضوع بنر ارسالی میتواند تبلیغ سرور دیسکورد ، چنل یوتوب ، سایت و ... باشد**",inline=False)
+            order_embed.set_footer(text="در صورت تایید موارد بالا از دکمه ثبت سفارش استفاده کنید ✅")
             await interaction.response.send_message(embed=order_embed,view=order_view,ephemeral=True)
 
 
@@ -183,10 +183,10 @@ async def account_info(interaction:Interaction):
     else:
         account_info_embed = Embed(title="**اطلاعات حساب کاربری شما به صورت زیر میباشد :**",color=Colour.blue())
         account_info_embed.set_author(name=interaction.user.name,icon_url=interaction.user.avatar)
-        account_info_embed.add_field(name="🆔 UserID :",value=interaction.user.id,inline=False)
-        account_info_embed.add_field(name="💰 Coins :" ,value=item[1],inline=False)
-        account_info_embed.add_field(name="🏷 Ads :",value=item[2],inline=False)
-        account_info_embed.add_field(name="⚠ Warnings :",value=item[3],inline=False)
+        account_info_embed.add_field(name="🆔 UserID :",value=f"`{interaction.user.id}`",inline=False)
+        account_info_embed.add_field(name="💰 Coins :" ,value=f"`{item[1]}`",inline=False)
+        account_info_embed.add_field(name="🏷 Ads :",value=f"`{item[2]}`",inline=False)
+        account_info_embed.add_field(name="🛑 Warnings :",value=f"`{item[3]}`",inline=False)
         await interaction.response.send_message(embed=account_info_embed,ephemeral=True)
 
 
@@ -213,7 +213,7 @@ async def transfer(interaction:Interaction,amount:int,user:Member):
             await interaction.response.send_message("**اطلاعات کاربری این کاربر در دیتابیس یافت نشد. عملیات ثبت نام این کاربر با موفقیت انجام شد لطفا دوباره از این کامند استفاده کنید. ✅**")
         else:
             if amount > transporter[1]:
-                await interaction.response.send_message("**سکه های شما کمتر از مقدار موردنظر جهت انتقال است ❌**")
+                await interaction.response.send_message("**سکه های شما کمتر از مقدار موردنظر جهت انتقال است ❗**")
             else:
                 try:
                     DataBase.cursor.execute(f"UPDATE table1 SET balance = {transporter[1] - amount} WHERE userid = {interaction.user.id}")
@@ -235,7 +235,7 @@ async def transfer(interaction:Interaction,amount:int,user:Member):
 @client.tree.command(name="help",description="درباره بات و آموزشات 📚")
 async def help(interaction:Interaction):
 
-    get_started_embed = Embed(title="آموزش کار با بات و ثبت بنر تبلیغاتی 🤖",description="""
+    get_started_embed = Embed(title="آموزش کار با بات و ثبت بنر تبلیغاتی 📚",description="""
                               
                               
                               > ** برای ثبت بنر به چی نیاز دارم ؟ ❓**
@@ -248,7 +248,7 @@ async def help(interaction:Interaction):
 
                               > ** چجوری سکه بگیرم؟ ❓**
 
-                              اما برای به دست آوردن سکه شما میتوانید بنر های تبلیغاتی دیگران رو ببینید و از دکمه Seen زیر بنر هاشون استفاده کنید تا سکه بگیرید
+                               برای به دست آوردن سکه شما میتوانید بنر های تبلیغاتی دیگران رو ببینید و از دکمه Seen زیر بنر هاشون استفاده کنید تا سکه بگیرید
                               با هر بار کلیک کردن روی دکمه Seen زیر بنر ها شما 10 سکه دریافت میکنید!
 
                               ----------------------------------------------------------------------------------
@@ -302,6 +302,7 @@ async def help(interaction:Interaction):
     get_started_embed.add_field(name="`/account_info`",value="**نمایش اطلاعات کاربری شما در سیستم بات و دیتابیس**",inline=False)
     get_started_embed.add_field(name="`/order`",value="**کامند اصلی بات جهت ثبت تبلیغات**",inline=False)
     get_started_embed.add_field(name="`/transfer`",value="**جهت انتقال سکه به سایر کاربران**",inline=False)
+    get_started_embed.set_footer(text="موفق باشی 😉")
 
     help_embed = Embed(title=f" دیسکواد | DiscoAD 📢",
                        description="""** به دسیکواد خوش اومدی 🤗
@@ -309,7 +310,6 @@ async def help(interaction:Interaction):
                        این سیستم به شما کمک میکنه بتونید با تبلیغات گشترده ممبر ، مشتری ، ویو و ... جذب کنید.
                        به همین راحتی 😃
                        برای شروع کار میتونی از دکمه زیر استفاده کنی 👇**""",color=Colour.blurple())
-    help_embed.set_footer(text="موفق باشی 😉")
     help_embed.set_author(name=interaction.user.display_name , icon_url=interaction.user.avatar.url)
     help_embed.set_thumbnail(url='https://png.pngtree.com/png-vector/20190826/ourmid/pngtree-marketing-png-image_1697508.jpg')
     
@@ -347,6 +347,8 @@ async def help(interaction:Interaction):
 @app_commands.default_permissions(administrator=True)
 @app_commands.describe(user="کاربر موردنظر رو منشن کنید")
 async def user_manager(interaction:Interaction,user:Member):
+        allow_list = []
+        
         DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
         show_item = DataBase.cursor.fetchone()
         #User Data
@@ -357,16 +359,16 @@ async def user_manager(interaction:Interaction,user:Member):
         except:
             pass
         manager_embed = Embed(title="کاربر موردنظر با موفقیت از دیتابیس فچ شد",color=Colour.blurple())
-        manager_embed.add_field(name="**🆔 UserID :**",value=user.id,inline=False)
-        manager_embed.add_field(name="**👤 Mention :**",value=user.mention,inline=False)
-        manager_embed.add_field(name="**💰 Coins :**",value=user_balance,inline=False)
-        manager_embed.add_field(name="**🏷 Ads :**",value=user_ads,inline=False)
-        manager_embed.add_field(name="**🛑 Warnings :**",value=user_warn,inline=False)
+        manager_embed.add_field(name="**🆔 UserID :**",value=f"`{user.id}`",inline=False)
+        manager_embed.add_field(name="**👤 Mention :**",value=f"{user.mention}",inline=False)
+        manager_embed.add_field(name="**💰 Coins :**",value=f"`{user_balance}`",inline=False)
+        manager_embed.add_field(name="**🏷 Ads :**",value=f"`{user_ads}`",inline=False)
+        manager_embed.add_field(name="**🛑 Warnings :**",value=f"`{user_warn}`",inline=False)
         manager_embed.set_footer(text="چه عملی انجام بدم؟ 😊")
 
 
         add_coin_button = Button(label="واریز سکه",emoji="➕",style=ButtonStyle.blurple)
-        add_warn_button = Button(label="افزودن وارن",emoji="⚠",style=ButtonStyle.red)
+        add_warn_button = Button(label="افزودن اخطار",emoji="⚠",style=ButtonStyle.red)
         remove_coin_button = Button(label="برداشت سکه",emoji="➖",style=ButtonStyle.blurple)
         remove_user_button = Button(label="حذف کاربر",emoji="🗑",style=ButtonStyle.red)
 
@@ -385,13 +387,15 @@ async def user_manager(interaction:Interaction,user:Member):
                         #user_warn = item[3]
                     #except:
                         #pass
-
-                try:
-                    DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] + int(self.add_amount.value)} WHERE userid = {user.id}")
-                    DataBase.connection.commit()
-                    await interaction.response.send_message(f"**مقدار {self.add_amount} سکه به کاربر واریز شد. ✅**")
-                except Exception as error:
-                    await interaction.response.send_message("**در واریز سکه مشکلی پیش اومد ❌** {}".format(error))
+                if interaction.user.id != 1006459247057436703:
+                    pass
+                else:
+                    try:
+                        DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] + int(self.add_amount.value)} WHERE userid = {user.id}")
+                        DataBase.connection.commit()
+                        await interaction.response.send_message(f"**مقدار {self.add_amount} سکه به کاربر واریز شد. ✅**")
+                    except Exception as error:
+                        await interaction.response.send_message("**در واریز سکه مشکلی پیش اومد ❌** {}".format(error))
 
 
         
@@ -408,35 +412,41 @@ async def user_manager(interaction:Interaction,user:Member):
                         #user_warn = item[3]
                     #except:
                         #pass
-                try:
-                    if  item[1]>= int(self.remove_amount.value):
-                        DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] - int(self.remove_amount.value)} WHERE userid = {user.id}")
-                        DataBase.connection.commit()
-                        await interaction.response.send_message(f"**مقدار {self.remove_amount} سکه از کاربر برداشت شد. ✅**")
-                    else:
-                        await interaction.response.send_message("**مقدار سکه کاربر از مقدار برداشت کمتر است ❌**")
-                except Exception as error:
-                        await interaction.response.send_message("**در برداشت سکه مشکلی پیش اومد ❌** {}".format(error))
+                if interaction.user.id != 1006459247057436703:
+                    pass
+                else:
+                    try:
+                        if  item[1]>= int(self.remove_amount.value):
+                            DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] - int(self.remove_amount.value)} WHERE userid = {user.id}")
+                            DataBase.connection.commit()
+                            await interaction.response.send_message(f"**مقدار {self.remove_amount} سکه از کاربر برداشت شد. ✅**")
+                        else:
+                            await interaction.response.send_message("**مقدار سکه کاربر از مقدار برداشت کمتر است ❗**")
+                    except Exception as error:
+                            await interaction.response.send_message("**در برداشت سکه مشکلی پیش اومد ❌** {}".format(error))
 
 
 
 
         async def add_warn_button_callback(interaction:Interaction):
-            try:
-                DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
-                item = DataBase.cursor.fetchone()
-                if item[3] + 1 == 3:
-                    await user.ban(reason="رعایت نکردن قوانین ثبت بنر 🚫")
-                    await interaction.response.send_message("**وارن های این کاربر به 3 تا رسید. کاربر با موفقیت بن شد ✅**")
-                    DataBase.cursor.execute(f"DELETE FROM table1 WHERE userid = {user.id}")
-                    DataBase.connection.commit()
-                else:
-                    DataBase.cursor.execute(f"UPDATE table1 SET warnings = {item[3] + 1} WHERE userid = {user.id}")
-                    DataBase.connection.commit()
-                    await interaction.response.send_message("**برای کاربر یک وارن افزوده شد ✅**")
-            except Exception as error:
-                await interaction.response.send_message("**در افزودن وارن مشکلی پیش اومد ❌**")
-                print(error)
+            if interaction.user.id != 1006459247057436703:
+                pass
+            else:
+                try:
+                    DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
+                    item = DataBase.cursor.fetchone()
+                    if item[3] + 1 == 3:
+                        await user.ban(reason="رعایت نکردن قوانین ثبت بنر 🚫")
+                        await interaction.response.send_message("**اخطار های این کاربر به 3 تا رسید. کاربر با موفقیت بن شد ❗**")
+                        DataBase.cursor.execute(f"DELETE FROM table1 WHERE userid = {user.id}")
+                        DataBase.connection.commit()
+                    else:
+                        DataBase.cursor.execute(f"UPDATE table1 SET warnings = {item[3] + 1} WHERE userid = {user.id}")
+                        DataBase.connection.commit()
+                        await interaction.response.send_message("**برای کاربر یک اخطار افزوده شد ✅**")
+                except Exception as error:
+                    await interaction.response.send_message("**در افزودن اخطار مشکلی پیش اومد ❌**")
+                    print(error)
 
 
         async def add_coin_button_callback(interaction:Interaction):
@@ -449,17 +459,20 @@ async def user_manager(interaction:Interaction,user:Member):
 
         
         async def remove_user_button_callback(interaction:Interaction):
-            confirm_view = View()
-            confirm_embed = Embed(title="**آیا از حذف کاربر اطمینان دارید؟**",description="با انجام این کار تمامی اطلاعات کاربر از دیتابیس حذف میشود",color=Colour.blurple())
-            yes_button = Button(label="بله",emoji="✔",style=ButtonStyle.green)
-            no_button = Button(label="نه",emoji="✖",style=ButtonStyle.red)
+            if interaction.user.id != 1006459247057436703:
+                    pass
+            else:
+                confirm_view = View()
+                confirm_embed = Embed(title="**آیا از حذف کاربر اطمینان دارید؟**",description="با انجام این کار تمامی اطلاعات کاربر از دیتابیس حذف میشود",color=Colour.blurple())
+                yes_button = Button(label="بله",emoji="✔",style=ButtonStyle.green)
+                no_button = Button(label="نه",emoji="✖",style=ButtonStyle.red)
 
 
             async def yes_button_callback(interaction:Interaction):
                 try:
                     DataBase.cursor.execute(f"DELETE FROM table1 WHERE userid = {user.id}")
                     DataBase.connection.commit()
-                    await interaction.response.send_message("**تمامی اطلاعات ماربر با موفقیت از دیتابیس پاک شد**",ephemeral=True)
+                    await interaction.response.send_message("**تمامی اطلاعات کاربر با موفقیت از دیتابیس پاک شد**",ephemeral=True)
                 except:
                     await interaction.response.send_message("**در حذف کاربر خطایی رخ داد دوباره تلاش کنید ❌**",ephemeral=True)
             
@@ -492,6 +505,26 @@ async def user_manager(interaction:Interaction,user:Member):
         await interaction.response.send_message(embed=manager_embed,view=user_manager_view)
 
 
+
+
+
+
+@client.tree.command(name="sign_up_manual")
+@app_commands.default_permissions(administrator=True)
+@app_commands.describe(user=":کاربر موردنظر جهت ثبت نام دستی رو انتخاب کنید")
+async def sign_up_manual(interaction:Interaction,user:Member):
+    DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
+    item = DataBase.cursor.fetchone()
+
+    if item != None:
+        await interaction.response.send_message("**در حال حاضر اطلاعات کاربر موردنظر در دیتابیس موجود میباشد ❗**")
+    else:
+        try:
+            sign_up(user_id=user.id)
+            await interaction.response.send_message("**اطلاعات کاربر موردنطر با موفقیت در دیتابیس ثبت شد (ثبت نام موفقیت آمیز بود) ✅**")
+        except Exception as error :
+            await interaction.response.send_message("**در ثبت نام کاربر مشکلی رخ داد ❌** , {}".format(error))
+            
 
 
 
