@@ -14,7 +14,7 @@ from datacenter import DataBase
 client = Bot(command_prefix="!",
              intents=Intents.all(),
              status=Status.online,
-             activity=Activity(type=ActivityType.listening , name="To Spotify"))
+             activity=Activity(type=ActivityType.watching , name="ADS channel"))
 
 
 def sign_up(user_id:int):
@@ -77,10 +77,10 @@ async def order(interaction:Interaction):
         pass
     
 
-    seen_button = Button(label="Seen",emoji="👁‍🗨")
+    claim_button = Button(label="Claim",emoji="📥")
     report_button = Button(label="Report",emoji="🚫",style=ButtonStyle.gray)
 
-    async def seen_button_callback(interaction:Interaction):
+    async def claim_button_callback(interaction:Interaction):
         try:
             DataBase.cursor.execute(f"SELECT userid , balance , count FROM table1 WHERE userid = {interaction.user.id}")
             items = DataBase.cursor.fetchone()
@@ -115,11 +115,11 @@ async def order(interaction:Interaction):
 
 
     
-    seen_button.callback = seen_button_callback
+    claim_button.callback = claim_button_callback
     report_button.callback = report_button_callback
 
     banner_view = View(timeout=None)
-    banner_view.add_item(seen_button)
+    banner_view.add_item(claim_button)
     banner_view.add_item(report_button)
     
     
@@ -194,7 +194,7 @@ async def account_info(interaction:Interaction):
 
 
 
-@client.tree.command(name="transfer",description="انتقال سکه به کاربر دیگه 💰")
+@client.tree.command(name="transfer",description="انتقال سکه به کاربر دیگه 💸")
 @app_commands.describe(amount="مقدار سکه جهت انتقال را وارد کنید")
 @app_commands.describe(user="فرد موردنظر جهت انتقال سکه را وارد کنید")
 async def transfer(interaction:Interaction,amount:int,user:Member):
@@ -232,7 +232,7 @@ async def transfer(interaction:Interaction,amount:int,user:Member):
 
 
 @client.remove_command("help")
-@client.tree.command(name="help",description="درباره بات و آموزشات 📚")
+@client.tree.command(name="help",description="درباره بات و آموزشات ❓")
 async def help(interaction:Interaction):
 
     get_started_embed = Embed(title="آموزش کار با بات و ثبت بنر تبلیغاتی 📚",description="""
@@ -248,8 +248,8 @@ async def help(interaction:Interaction):
 
                               > ** چجوری سکه بگیرم؟ ❓**
 
-                               برای به دست آوردن سکه شما میتوانید بنر های تبلیغاتی دیگران رو ببینید و از دکمه Seen زیر بنر هاشون استفاده کنید تا سکه بگیرید
-                              با هر بار کلیک کردن روی دکمه Seen زیر بنر ها شما 10 سکه دریافت میکنید!
+                               برای به دست آوردن سکه شما میتوانید بنر های تبلیغاتی دیگران رو ببینید و از دکمه Claim زیر بنر هاشون استفاده کنید تا سکه بگیرید
+                              با هر بار کلیک کردن روی دکمه Claim زیر بنر ها شما 10 سکه دریافت میکنید!
 
                               ----------------------------------------------------------------------------------
 
@@ -343,7 +343,7 @@ async def help(interaction:Interaction):
 
 
 
-@client.tree.command(name='user_manager',description="مدیریت کاربر")
+@client.tree.command(name='user_manager',description="مدیریت کاربر 🔒")
 @app_commands.default_permissions(administrator=True)
 @app_commands.describe(user="کاربر موردنظر رو منشن کنید")
 async def user_manager(interaction:Interaction,user:Member):
@@ -504,27 +504,6 @@ async def user_manager(interaction:Interaction,user:Member):
 
         await interaction.response.send_message(embed=manager_embed,view=user_manager_view)
 
-
-
-
-
-
-@client.tree.command(name="sign_up_manual")
-@app_commands.default_permissions(administrator=True)
-@app_commands.describe(user=":کاربر موردنظر جهت ثبت نام دستی رو انتخاب کنید")
-async def sign_up_manual(interaction:Interaction,user:Member):
-    DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
-    item = DataBase.cursor.fetchone()
-
-    if item != None:
-        await interaction.response.send_message("**در حال حاضر اطلاعات کاربر موردنظر در دیتابیس موجود میباشد ❗**")
-    else:
-        try:
-            sign_up(user_id=user.id)
-            await interaction.response.send_message("**اطلاعات کاربر موردنطر با موفقیت در دیتابیس ثبت شد (ثبت نام موفقیت آمیز بود) ✅**")
-        except Exception as error :
-            await interaction.response.send_message("**در ثبت نام کاربر مشکلی رخ داد ❌** , {}".format(error))
-            
 
 
 
