@@ -26,8 +26,74 @@ def sign_up(user_id:int):
 
 
 
+
+class Logging: 
+    # Logging system (bot,users,ads etc.)
+    
+
+    async def ad_log(jump_link):
+        ad_log_channel = client.get_channel(1248281498147094538)
+        new_ad_log_embed = Embed(title="تبلیغ جدید ثبت شد ❗",description=jump_link)
+        try:
+            await ad_log_channel.send(embed=new_ad_log_embed)
+        except :
+            pass
+
+
+    async def user_log(member:Member,amount:int=None,add_coin=False , remove_coin=False , add_warn=False , delete_user=False):
+
+        user_log_channel = client.get_channel(1248281530401554478)
+        user_log_embed = Embed(color=0xffffff)
+        
+        if add_coin == True:
+            user_log_embed.add_field(name=f"به کاربری سکه اضافه شد ❗",value=f"""مقدار : {amount}
+                                                                                      به کاربر : {member.mention}""")
+            await user_log_channel.send(embed=user_log_embed)
+
+        elif remove_coin == True:
+            user_log_embed.add_field(name="از کاربری سکه کم شد ❗",value=f"""مقدار : {amount}
+                                                                                    از کاربر : {member.mention}""")
+            await user_log_channel.send(embed=user_log_embed)
+
+        elif add_warn == True:
+            user_log_embed.add_field(name=" به کاربری اخطار اضافه شد ❗",value=f"به کاربر : {member.mention}")
+            await user_log_channel.send(embed=user_log_embed)
+        
+        elif delete_user == True:
+            user_log_embed.add_field(name="کاربری حذف شد ❗",value=f"کاربر : {member.mention}")
+            await user_log_channel.send(embed=user_log_embed)
+
+
+        
+    async def bot_log(connected=False,ready=False,resumed=False):
+        bot_log_channel = client.get_channel(1248281681014689936)
+        bot_log_embed = Embed(color=0xffffff)
+        
+
+        if connected == True:
+            bot_log_embed.add_field(name='etst',value='test')
+            await bot_log_channel.send(embed=bot_log_embed)
+
+        if ready == True:
+            bot_log_embed.add_field(name="sdf",value="sfsdf")
+            print(bot_log_channel)
+            await bot_log_channel.send("sfdsdf")
+
+
+        
+
+
+
+
+
+@client.event
+async def on_connect():
+    await Logging.bot_log(connected=True)
+
+
 @client.event
 async def on_ready():
+    await Logging.bot_log(ready=True)
     print("Bot is online !")
     try:
         synced = await client.tree.sync()
@@ -133,7 +199,8 @@ async def order(interaction:Interaction):
                banner_info_embed = Embed(color=Colour.random())
                banner_info_embed.add_field(name="👤 Owner :",value=f"{interaction.user.mention}")
                banner_info_embed.add_field(name="🕐 At :" , value=f"{datetime.datetime.now()}")
-               await ad_channel.send(self.banner,view=banner_view,embed=banner_info_embed,delete_after=86400)
+               message = await ad_channel.send(self.banner,view=banner_view,embed=banner_info_embed,delete_after=86400)
+               await Logging.ad_log(jump_link=message.jump_url)
                DataBase.cursor.execute(f"UPDATE table1 SET balance = {user_balance - 500} , count = {user_ad_count + 1} WHERE userid = {interaction.user.id}")
                DataBase.connection.commit()
                await interaction.response.send_message("**بنر با موفقیت ارسال شد و مقدار 500 سکه از حساب شما کسر شد ✅**",ephemeral=True)
@@ -295,7 +362,7 @@ async def help(interaction:Interaction):
                               > **بنرم تا چه مدت باقی میمونه؟ ❓**
 
                               بنر شما در چنل <#1224577122555920405> 24 ساعت معادل یک شبانه روز کامل باقی میمونه و به صورت عمومی قابل مشاهده است.
-                              بعد از این مدت بنر به صورت خودکار پاک میشه ♻
+                              بعد از این مدت بنر به صورت خودکار پاک میشه ♻ 
 
                             > ** لیست دستورات بات :**
 """,color=Colour.blurple())
@@ -393,6 +460,7 @@ async def user_manager(interaction:Interaction,user:Member):
                     try:
                         DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] + int(self.add_amount.value)} WHERE userid = {user.id}")
                         DataBase.connection.commit()
+                        await Logging.user_log(member=user,add_coin=True,amount=self.add_amount)
                         await interaction.response.send_message(f"**مقدار {self.add_amount} سکه به کاربر واریز شد. ✅**")
                     except Exception as error:
                         await interaction.response.send_message("**در واریز سکه مشکلی پیش اومد ❌** {}".format(error))
@@ -416,9 +484,10 @@ async def user_manager(interaction:Interaction,user:Member):
                     pass
                 else:
                     try:
-                        if  item[1]>= int(self.remove_amount.value):
+                        if item[1]>= int(self.remove_amount.value):
                             DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] - int(self.remove_amount.value)} WHERE userid = {user.id}")
                             DataBase.connection.commit()
+                            await Logging.user_log(member=user,remove_coin=True,amount=self.remove_amount) # Send log to log channel
                             await interaction.response.send_message(f"**مقدار {self.remove_amount} سکه از کاربر برداشت شد. ✅**")
                         else:
                             await interaction.response.send_message("**مقدار سکه کاربر از مقدار برداشت کمتر است ❗**")
@@ -443,6 +512,7 @@ async def user_manager(interaction:Interaction,user:Member):
                     else:
                         DataBase.cursor.execute(f"UPDATE table1 SET warnings = {item[3] + 1} WHERE userid = {user.id}")
                         DataBase.connection.commit()
+                        await Logging.user_log(member=user,add_warn=True)
                         await interaction.response.send_message("**برای کاربر یک اخطار افزوده شد ✅**")
                 except Exception as error:
                     await interaction.response.send_message("**در افزودن اخطار مشکلی پیش اومد ❌**")
@@ -472,9 +542,10 @@ async def user_manager(interaction:Interaction,user:Member):
                 try:
                     DataBase.cursor.execute(f"DELETE FROM table1 WHERE userid = {user.id}")
                     DataBase.connection.commit()
-                    await interaction.response.send_message("**تمامی اطلاعات کاربر با موفقیت از دیتابیس پاک شد**",ephemeral=True)
-                except:
-                    await interaction.response.send_message("**در حذف کاربر خطایی رخ داد دوباره تلاش کنید ❌**",ephemeral=True)
+                    await Logging.user_log (member=user,delete_user=True)
+                    await interaction.response.send_message("**تمامی اطلاعات کاربر با موفقیت از دیتابیس پاک شد ✅**",ephemeral=True)
+                except Exception as error:
+                    await interaction.response.send_message(f"**در حذف کاربر خطایی رخ داد دوباره تلاش کنید ❌ {error}**",ephemeral=True)
             
             async def no_button_callback(interaction:Interaction):
                 await interaction.response.send_message("**عملیات با موفقیت لغو شد✅**",ephemeral=True)
