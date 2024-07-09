@@ -10,8 +10,12 @@ from colorama import Fore , init
 import random
 import datetime
 
-init()
 
+# Convert to Linux terminal
+#init()
+
+# convert to cmd (windowa terminal)
+#init(convert=True)
 
 
 client = Bot(command_prefix="!",
@@ -89,7 +93,7 @@ class Logging:
             resume_log_embed.add_field(name="🔒 API reconnector method :",value=f"`{random.choise(api_reconnector_method)}`")
             resume_log_embed.set_footer(text=datetime.datetime.now())
             
-            await bot_log_channel.send(embed=bot_log_embed)
+            await bot_log_channel.send(embed=resume_log_embed)
 
 
     
@@ -195,6 +199,17 @@ async def order(interaction:Interaction):
     banner_view = View(timeout=None)
     banner_view.add_item(claim_button)
     banner_view.add_item(report_button)
+
+    
+
+
+    class TrackingCode:
+        tc = f"Da{random.randint(100000000,900000000)}"
+        
+        def tracking_code_log(self):
+            tracking_code_file = open("tracking_codes.txt",'a')
+            tracking_code_file.writelines(f"\n{self.tc}")
+
     
     
 
@@ -204,6 +219,7 @@ async def order(interaction:Interaction):
         async def on_submit(self, interaction: Interaction):
            
            try:
+               my_tc = TrackingCode()
                banner_info_embed = Embed(color=Colour.random())
                banner_info_embed.add_field(name="👤 Owner :",value=f"{interaction.user.mention}")
                banner_info_embed.add_field(name="🕐 At :" , value=f"{datetime.datetime.now()}")
@@ -211,7 +227,8 @@ async def order(interaction:Interaction):
                await Logging.ad_log(jump_link=message.jump_url)
                DataBase.cursor.execute(f"UPDATE table1 SET balance = {user_balance - 500} , count = {user_ad_count + 1} WHERE userid = {interaction.user.id}")
                DataBase.connection.commit()
-               await interaction.response.send_message("**بنر با موفقیت ارسال شد و مقدار 500 سکه از حساب شما کسر شد ✅**",ephemeral=True)
+               await interaction.response.send_message(f"**بنر با موفقیت ارسال شد و مقدار 500 سکه از حساب شما کسر شد ✅**\n کد پیگیری : {my_tc.tc}",ephemeral=True)
+               my_tc.tracking_code_log()
            except Exception as error:
                print(error)
                
@@ -587,4 +604,4 @@ async def user_manager(interaction:Interaction,user:Member):
 
 
 
-client.run('MTIyNTc1ODQ5MTc3NjY1MTI2NA.Gkks-J.6a1oF1Rkcay5jCwnv6l6mMkMMmiwH3ZnXiD2PY')
+client.run('')
