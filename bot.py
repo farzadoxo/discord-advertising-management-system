@@ -1,3 +1,8 @@
+
+# // Logging system added
+# // Tracking code generator and loger added
+
+
 from discord import (app_commands , Intents  , Interaction ,
                       Status , Activity , ActivityType ,
                         ButtonStyle , TextStyle , Member ,
@@ -21,7 +26,7 @@ import datetime
 client = Bot(command_prefix="!",
              intents=Intents.all(),
              status=Status.online,
-             activity=Activity(type=ActivityType.watching , name="BillBoards 🖼️"))
+             activity=Activity(type=ActivityType.custom , name="Billboards "))
 
 
 def sign_up(user_id:int):
