@@ -214,6 +214,7 @@ async def order(interaction:Interaction):
         def tracking_code_log(self):
             tracking_code_file = open("tracking_codes.txt",'a')
             tracking_code_file.writelines(f"\n{self.tc}")
+            tracking_code_file.close()
 
     
     
