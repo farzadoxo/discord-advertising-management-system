@@ -19,7 +19,7 @@ import datetime
 # Convert to Linux terminal
 #init()
 
-# convert to cmd (windowa terminal)
+# convert to cmd (windows terminal)
 #init(convert=True)
 
 
