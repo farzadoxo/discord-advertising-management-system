@@ -408,7 +408,11 @@ async def help(interaction:Interaction):
                        این سیستم به شما کمک میکنه بتونید با تبلیغات گشترده ممبر ، مشتری ، ویو و ... جذب کنید.
                        به همین راحتی 😃
                        برای شروع کار میتونی از دکمه زیر استفاده کنی 👇**""",color=Colour.blurple())
-    help_embed.set_author(name=interaction.user.display_name , icon_url=interaction.user.avatar.url)
+    try:
+        help_embed.set_author(name=interaction.user.display_name , icon_url=interaction.user.avatar.url)
+    except AttributeError:
+        help_embed.set_author(name=interaction.user.display_name)
+    
     help_embed.set_thumbnail(url='https://png.pngtree.com/png-vector/20190826/ourmid/pngtree-marketing-png-image_1697508.jpg')
     
     get_started_button = Button(label="Get Started !",emoji="🔰",style=ButtonStyle.gray)
