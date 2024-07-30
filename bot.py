@@ -45,7 +45,7 @@ class Logging:
 
     async def ad_log(jump_link):
         ad_log_channel = client.get_channel(1248281498147094538)
-        new_ad_log_embed = Embed(title="تبلیغ جدید ثبت شد ❗",description=jump_link)
+        new_ad_log_embed = Embed(title="تبلیغ جدید ثبت شد ❗",description=jump_link,color=0xffffff)
         try:
             await ad_log_channel.send(embed=new_ad_log_embed)
         except :
@@ -83,7 +83,7 @@ class Logging:
         
         if connected == True:
             connect_log_embed = Embed(title="Client successfully connected to Discord API 💡",color=0x00ff00)
-            connect_log_embed.add_field(name="📡 Ping :",value=int(client.latency * 1000))
+            connect_log_embed.add_field(name="📡 Ping :",value=f"`{int(client.latency * 1000)}/ms`")
             connect_log_embed.add_field(name="📟 Server Status :",value="OK")
             connect_log_embed.set_footer(text=datetime.datetime.now())
             
