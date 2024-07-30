@@ -6,13 +6,13 @@
 from discord import (app_commands , Intents  , Interaction ,
                       Status , Activity , ActivityType ,
                         ButtonStyle , TextStyle , Member ,
-                        Embed , Colour , SelectOption , Emoji)
-from discord.ext.commands import Bot , has_permissions
+                        Embed , Colour)
+from discord.ext.commands import Bot
 from discord.ext import commands
 from discord.ui import (Button , View , Modal , TextInput)
 from datacenter import DataBase
 from colorama import Fore , init
-import random
+from self_madules import (SignUp , Logging , TrackingCode)
 import datetime
 
 
@@ -27,89 +27,15 @@ client = Bot(command_prefix="!",
              activity=Activity(type=ActivityType.custom , name="Billboards "))
 
 
-def sign_up(user_id:int):
-    try:
-        DataBase.cursor.execute(f"INSERT INTO table1 VALUES ({user_id} , 500 , 0 , 0)")
-        DataBase.connection.commit()
-    except:
-        pass
-
-
-
-
-class Logging: 
-    # Logging system (bot,users,ads etc.)
-    
-
-    async def ad_log(jump_link):
-        ad_log_channel = client.get_channel(1248281498147094538)
-        new_ad_log_embed = Embed(title="تبلیغ جدید ثبت شد ❗",description=jump_link,color=0xffffff)
-        try:
-            await ad_log_channel.send(embed=new_ad_log_embed)
-        except :
-            pass
-
-
-    async def user_log(member:Member,amount:int=None,add_coin=False , remove_coin=False , add_warn=False , delete_user=False):
-
-        user_log_channel = client.get_channel(1248281530401554478)
-        user_log_embed = Embed(color=0xffffff)
-        
-        if add_coin == True:
-            user_log_embed.add_field(name=f"به کاربری سکه اضافه شد ❗",value=f"""مقدار : {amount}
-                                                                                      به کاربر : {member.mention}""")
-            await user_log_channel.send(embed=user_log_embed)
-
-        elif remove_coin == True:
-            user_log_embed.add_field(name="از کاربری سکه کم شد ❗",value=f"""مقدار : {amount}
-                                                                                    از کاربر : {member.mention}""")
-            await user_log_channel.send(embed=user_log_embed)
-
-        elif add_warn == True:
-            user_log_embed.add_field(name=" به کاربری اخطار اضافه شد ❗",value=f"به کاربر : {member.mention}")
-            await user_log_channel.send(embed=user_log_embed)
-        
-        elif delete_user == True:
-            user_log_embed.add_field(name="کاربری حذف شد ❗",value=f"کاربر : {member.mention}")
-            await user_log_channel.send(embed=user_log_embed)
-
-
-        
-    async def bot_log(connected=False,ready=False,resumed=False):
-        bot_log_channel = client.get_channel(1248281681014689936)
-        api_reconnector_method = ["ssl","ssh","http"]
-        
-        if connected == True:
-            connect_log_embed = Embed(title="Client successfully connected to Discord API 💡",color=0x00ff00)
-            connect_log_embed.add_field(name="📡 Ping :",value=f"`{int(client.latency * 1000)}/ms`")
-            connect_log_embed.add_field(name="📟 Server Status :",value="OK")
-            connect_log_embed.set_footer(text=datetime.datetime.now())
-            
-            await bot_log_channel.send(embed=connect_log_embed)
-
-        if ready == True:
-            print(Fore.GREEN+"Client ready ! :)"+Fore.RESET)
-            
-        if resumed == True:
-            resume_log_embed = Embed(title="Client successfully reconnect to Discord API 🔌",color=0x0000ff)
-            resume_log_embed.add_field(name="📡 Ping :",value=int(client.latency * 1000))
-            resume_log_embed.add_field(name="🔒 API reconnector method :",value=f"`{random.choise(api_reconnector_method)}`")
-            resume_log_embed.set_footer(text=datetime.datetime.now())
-            
-            await bot_log_channel.send(embed=resume_log_embed)
-
-
-    
-
 
 @client.event
 async def on_connect():
-    await Logging.bot_log(connected=True)
+    await Logging.bot_log(client=client,connected=True)
 
 
 @client.event
 async def on_ready():
-    await Logging.bot_log(ready=True)
+    await Logging.bot_log(client=client,ready=True)
     try:
         synced = await client.tree.sync()
         print(f"{len(synced)} command synced successfully.")
@@ -128,20 +54,6 @@ welcome_embed.set_footer(text="ثبت نام شما با موفقیت انجام
 welcome_embed.add_field(name=" 🔰 از کجا شروع کنم؟",value="""برای اطلاعات بیشتر در مورد خدمات تبلیغاتی ما و آموزش کارکردن با بات از دستور `help/` استفاده کنید """)
 
 
-
-# class DataExtractor:
-#     def __init__(self , userid:int):
-#         self.userid = userid
-
-#     DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {.userid}")
-#     item = DataBase.cursor.fetchone()
-#     try:
-#         # User Data
-#         user_balance = item[1]
-#         user_ads = item[2]
-#         user_warn = item[3]
-#     except:
-#         pass
 
 
 @client.tree.command(name="order",description="سفارش تبلیغات 📮")
@@ -169,7 +81,7 @@ async def order(interaction:Interaction):
             user_balance = items[1]
             
             if items == None:
-                sign_up(user_id=interaction.user.id)
+                SignUp.sign_up(user_id=interaction.user.id)
                 await interaction.response.send_message(embed=welcome_embed,ephemeral=True)
             else:
                 DataBase.cursor.execute(f"UPDATE table1 SET balance = {user_balance + 10} WHERE userid = {interaction.user.id}")
@@ -205,16 +117,6 @@ async def order(interaction:Interaction):
 
     
 
-
-    class TrackingCode:
-        tc = f"Da{random.randint(100000000,900000000)}"
-        
-        def tracking_code_log(self):
-            tracking_code_file = open("tracking_codes.txt",'a')
-            tracking_code_file.writelines(f"\n{self.tc}")
-            tracking_code_file.close()
-
-    
     
 
     class BannerModal(Modal , title="ارسال بنر"):
@@ -228,7 +130,7 @@ async def order(interaction:Interaction):
                banner_info_embed.add_field(name="👤 Owner :",value=f"{interaction.user.mention}")
                banner_info_embed.add_field(name="🕐 At :" , value=f"{datetime.datetime.now()}")
                message = await ad_channel.send(self.banner,view=banner_view,embed=banner_info_embed,delete_after=86400)
-               await Logging.ad_log(jump_link=message.jump_url)
+               await Logging.ad_log(client=client,jump_link=message.jump_url)
                DataBase.cursor.execute(f"UPDATE table1 SET balance = {user_balance - 500} , count = {user_ad_count + 1} WHERE userid = {interaction.user.id}")
                DataBase.connection.commit()
                await interaction.response.send_message(f"**بنر با موفقیت ارسال شد و مقدار 500 سکه از حساب شما کسر شد ✅**\n کد پیگیری : {my_tc.tc}",ephemeral=True)
@@ -249,7 +151,7 @@ async def order(interaction:Interaction):
     
 
     if item == None:
-        sign_up(user_id=interaction.user.id)
+        SignUp.sign_up(user_id=interaction.user.id)
         await interaction.response.send_message(embed=welcome_embed,ephemeral=True)
     else:
         if user_balance < 500:
@@ -274,7 +176,7 @@ async def account_info(interaction:Interaction):
     item = DataBase.cursor.fetchone()
 
     if item == None:
-        sign_up(user_id=interaction.user.id)
+        SignUp.sign_up(user_id=interaction.user.id)
         await interaction.response.send_message(embed=welcome_embed,ephemeral=True)
     else:
         account_info_embed = Embed(title="**اطلاعات حساب کاربری شما به صورت زیر میباشد :**",color=Colour.blue())
@@ -301,11 +203,11 @@ async def transfer(interaction:Interaction,amount:int,user:Member):
     transporter = DataBase.cursor.fetchone()
 
     if transporter == None:
-        sign_up(user_id=interaction.user.id)
+        SignUp.sign_up(user_id=interaction.user.id)
         await interaction.response.send_message(embed=welcome_embed,ephemeral=True)
     else:
         if to == None:
-            sign_up(user_id=user.id)
+            SignUp.sign_up(user_id=user.id)
             await interaction.response.send_message("**اطلاعات کاربری این کاربر در دیتابیس یافت نشد. عملیات ثبت نام این کاربر با موفقیت انجام شد لطفا دوباره از این کامند استفاده کنید. ✅**")
         else:
             if amount > transporter[1]:
@@ -432,7 +334,7 @@ async def help(interaction:Interaction):
     item = DataBase.cursor.fetchone()
 
     if item == None:
-        sign_up(user_id=interaction.user.id)
+        SignUp.sign_up(user_id=interaction.user.id)
         await interaction.response.send_message(embed=welcome_embed,ephemeral=True)
     else:
         await interaction.response.send_message(embed=help_embed,view=help_view,ephemeral=True)
@@ -493,7 +395,7 @@ async def user_manager(interaction:Interaction,user:Member):
                     try:
                         DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] + int(self.add_amount.value)} WHERE userid = {user.id}")
                         DataBase.connection.commit()
-                        await Logging.user_log(member=user,add_coin=True,amount=self.add_amount)
+                        await Logging.user_log(client=client,member=user,add_coin=True,amount=self.add_amount)
                         await interaction.response.send_message(f"**مقدار {self.add_amount} سکه به کاربر واریز شد. ✅**")
                     except Exception as error:
                         await interaction.response.send_message("**در واریز سکه مشکلی پیش اومد ❌** {}".format(error))
@@ -520,7 +422,7 @@ async def user_manager(interaction:Interaction,user:Member):
                         if item[1]>= int(self.remove_amount.value):
                             DataBase.cursor.execute(f"UPDATE table1 SET balance = {item[1] - int(self.remove_amount.value)} WHERE userid = {user.id}")
                             DataBase.connection.commit()
-                            await Logging.user_log(member=user,remove_coin=True,amount=self.remove_amount) # Send log to log channel
+                            await Logging.user_log(client=client,member=user,remove_coin=True,amount=self.remove_amount) # Send log to log channel
                             await interaction.response.send_message(f"**مقدار {self.remove_amount} سکه از کاربر برداشت شد. ✅**")
                         else:
                             await interaction.response.send_message("**مقدار سکه کاربر از مقدار برداشت کمتر است ❗**")
@@ -545,7 +447,7 @@ async def user_manager(interaction:Interaction,user:Member):
                     else:
                         DataBase.cursor.execute(f"UPDATE table1 SET warnings = {item[3] + 1} WHERE userid = {user.id}")
                         DataBase.connection.commit()
-                        await Logging.user_log(member=user,add_warn=True)
+                        await Logging.user_log(client=client,member=user,add_warn=True)
                         await interaction.response.send_message("**برای کاربر یک اخطار افزوده شد ✅**")
                 except Exception as error:
                     await interaction.response.send_message("**در افزودن اخطار مشکلی پیش اومد ❌**")
@@ -575,7 +477,7 @@ async def user_manager(interaction:Interaction,user:Member):
                 try:
                     DataBase.cursor.execute(f"DELETE FROM table1 WHERE userid = {user.id}")
                     DataBase.connection.commit()
-                    await Logging.user_log (member=user,delete_user=True)
+                    await Logging.user_log (client=client,member=user,delete_user=True)
                     await interaction.response.send_message("**تمامی اطلاعات کاربر با موفقیت از دیتابیس پاک شد ✅**",ephemeral=True)
                 except Exception as error:
                     await interaction.response.send_message(f"**در حذف کاربر خطایی رخ داد دوباره تلاش کنید ❌ {error}**",ephemeral=True)
