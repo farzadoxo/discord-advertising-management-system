@@ -16,8 +16,6 @@ import random
 import datetime
 
 
-# Convert to Linux terminal
-#init()
 
 # convert to cmd (windows terminal)
 #init(convert=True)
