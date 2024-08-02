@@ -512,6 +512,58 @@ async def user_manager(interaction:Interaction,user:Member):
 
 
 
+@client.tree.command(name='status',description="وضعیت بات و دیتابیس")
+@app_commands.default_permissions(administrator=True)
+async def status(interaction:Interaction):
 
+    DataBase.cursor.execute("SELECT * FROM table1")
+    all_items = DataBase.cursor.fetchall()
+
+
+    all_coins = 0
+    for item in all_items:
+        all_coins += item[1]
+
+
+    all_ads = 0
+    for item in all_items:
+        all_ads += item[2]
+
+
+    status_embed = Embed(title='وضعیت بات به شرح زیر میباشد :',description=f"📡 Ping : `{int(client.latency * 1000)}/ms` \n 📟 Server Stats : `🟡` \n 🔌 API Stats : `🟢` \n ",color=0xffffff)
+
+
+    db_status_embed = Embed(title="وضعیت دیتابیس به شرح زیر میباشد :",color=0x000000)
+    db_status_embed.add_field(name=": وضعیت 🔍",value=f"OK",inline=False)
+    db_status_embed.add_field(name=":‌ حجم دیتابیس 📦",value="`3kb`",inline=False)
+    db_status_embed.add_field(name=": تعداد رکورد ها 🧾",value=f"`{len(all_items)}`",inline=False)
+
+    
+    service_stats_embed = Embed(title="وضعیت سرویس به شرح زیر میباشد :",color=0x000000)
+    service_stats_embed.add_field(name=":‌ تعداد کاربران 👤",value=len(all_items),inline=False)
+    service_stats_embed.add_field(name=":‌ سکه های موجود توی سیستم 💰",value=all_coins,inline=False)
+    service_stats_embed.add_field(name=": تعداد کل تبلیغات 🏷️",value=all_ads,inline=False)
+    service_stats_embed.add_field(name=": آمار کلی 📊",value="404 Bad request!",inline=False)
+
+
+
+    db_stats_button = Button(label="وضعیت دیتابیس",emoji='🗃️',style=ButtonStyle.green)
+    service_stats_button = Button(label='وضعیت سرویس',emoji='🧾',style=ButtonStyle.blurple)
+
+    async def db_stats_button_calllback(interaction:Interaction):
+        await interaction.response.send_message(embed=db_status_embed)
+
+    async def service_stats_button_callback(interaction:Interaction):
+        await interaction.response.send_message(embed=service_stats_embed)
+
+
+    db_stats_button.callback = db_stats_button_calllback
+    service_stats_button.callback = service_stats_button_callback
+
+    status_view = View()
+    status_view.add_item(db_stats_button)
+    status_view.add_item(service_stats_button)
+
+    await interaction.response.send_message(embed=status_embed,view=status_view)
 
 client.run('')
