@@ -1,6 +1,4 @@
-
-# // Logging system added
-# // Tracking code generator and loger added
+# You can see all changes in commit history
 
 
 from discord import (app_commands , Intents  , Interaction ,
@@ -24,7 +22,7 @@ import datetime
 client = Bot(command_prefix="!",
              intents=Intents.all(),
              status=Status.online,
-             activity=Activity(type=ActivityType.custom , name="Billboards "))
+             activity=Activity(type=ActivityType.watching , name="Billboards "))
 
 
 
@@ -566,4 +564,7 @@ async def status(interaction:Interaction):
 
     await interaction.response.send_message(embed=status_embed,view=status_view)
 
-client.run('')
+
+
+
+client.run('Discord token')
