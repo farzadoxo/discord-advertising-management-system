@@ -1,6 +1,3 @@
-# You can see all changes in commit history
-
-
 from discord import (app_commands , Intents  , Interaction ,
                       Status , Activity , ActivityType ,
                         ButtonStyle , TextStyle , Member ,
@@ -22,7 +19,7 @@ import datetime
 client = Bot(command_prefix="!",
              intents=Intents.all(),
              status=Status.online,
-             activity=Activity(type=ActivityType.watching , name="Billboards "))
+             activity=Activity(type=ActivityType.watching , name="Billboards"))
 
 
 
@@ -56,7 +53,7 @@ welcome_embed.add_field(name=" 🔰 از کجا شروع کنم؟",value="""بر
 
 @client.tree.command(name="order",description="سفارش تبلیغات 📮")
 async def order(interaction:Interaction):
-    ad_channel = client.get_channel(1224577122555920405)
+    ad_channel = client.get_channel('CHANNEL ID')
 
     DataBase.cursor.execute(f"SELECT userid , balance , count FROM table1 WHERE userid = {interaction.user.id}")
     item = DataBase.cursor.fetchone()
@@ -92,7 +89,7 @@ async def order(interaction:Interaction):
 
 
     async def report_button_callback(interaction:Interaction):
-        report_channel = client.get_channel(1226883862924365947)
+        report_channel = client.get_channel('CHANNEL ID')
 
         report_embed = Embed(title="New report ❗",color=Colour.red())
         report_embed.add_field(name="Reported By : ",value=f"{interaction.user.mention}",inline=False)
@@ -300,8 +297,8 @@ async def help(interaction:Interaction):
     get_started_embed.add_field(name="`/transfer`",value="**جهت انتقال سکه به سایر کاربران**",inline=False)
     get_started_embed.set_footer(text="موفق باشی 😉")
 
-    help_embed = Embed(title=f" دیسکواد | DiscoAD 📢",
-                       description="""** به دسیکواد خوش اومدی 🤗
+    help_embed = Embed(title=f"Do you need help",
+                       description="""**
                        دیسکواد یه بات تبلیغاتی توی دیسکورد هستش که میتونید با استفاده از اون سرور ، محصولات ، صفحات مجازی بنر تبلیغاتی و ... خود را به صورت کاملن رایگان تبلیغ کنید
                        این سیستم به شما کمک میکنه بتونید با تبلیغات گشترده ممبر ، مشتری ، ویو و ... جذب کنید.
                        به همین راحتی 😃
@@ -347,8 +344,6 @@ async def help(interaction:Interaction):
 @app_commands.default_permissions(administrator=True)
 @app_commands.describe(user="کاربر موردنظر رو منشن کنید")
 async def user_manager(interaction:Interaction,user:Member):
-        allow_list = []
-        
         DataBase.cursor.execute(f"SELECT * FROM table1 WHERE userid = {user.id}")
         show_item = DataBase.cursor.fetchone()
         #User Data
@@ -567,4 +562,4 @@ async def status(interaction:Interaction):
 
 
 
-client.run('Discord token')
+client.run('Discord app token')

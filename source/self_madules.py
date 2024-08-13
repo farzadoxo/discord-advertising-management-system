@@ -23,7 +23,7 @@ class Logging:
     
 
     async def ad_log(client:Client,jump_link):
-        ad_log_channel = client.get_channel(1248281498147094538)
+        ad_log_channel = client.get_channel('CHANNEL ID')
         new_ad_log_embed = Embed(title="تبلیغ جدید ثبت شد ❗",description=jump_link,color=0xffffff)
         try:
             await ad_log_channel.send(embed=new_ad_log_embed)
@@ -33,7 +33,7 @@ class Logging:
 
     async def user_log(client:Client,member:Member,amount:int=None,add_coin=False , remove_coin=False , add_warn=False , delete_user=False):
 
-        user_log_channel = client.get_channel(1248281530401554478)
+        user_log_channel = client.get_channel('CHANNEL ID')
         user_log_embed = Embed(color=0xffffff)
         
         if add_coin == True:
@@ -57,7 +57,7 @@ class Logging:
 
         
     async def bot_log(client:Client,connected=False,ready=False,resumed=False):
-        bot_log_channel = client.get_channel(1248281681014689936)
+        bot_log_channel = client.get_channel('CHANNEL ID')
         api_reconnector_method = ["ssl","ssh","http"]
         
         if connected == True:
