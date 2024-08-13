@@ -1,6 +1,6 @@
-# DiscoAD-bot
-# What is DiscoAd?
-Discoad is a advertisment service bot and you can run it on discord or telegram
+# Advertisment discord bot
+# What is Advertisment discord bot?
+Discoad is a advertisment service bot and you can run it on discord or telegram (server or channel)
 
 # Features :
 
