@@ -1,5 +1,6 @@
 # Advertising discord bot
-
+![python](https://img.shields.io/badge/python-discord_py-yellow)
+![discord](https://img.shields.io/badge/discord-purple)
 <h2>ENG :</h2>
 <h3>What is Advertising discord bot?</h3> 
 Discord advertising bot is a service based on Discord api and discord app, with which you can manage your advertising services and servers.
